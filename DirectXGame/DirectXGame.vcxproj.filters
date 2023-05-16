@@ -105,6 +105,9 @@
     <ClCompile Include="3d\Model.cpp">
       <Filter>ソース ファイル\3d</Filter>
     </ClCompile>
+    <ClCompile Include="3d\Object3d.cpp">
+      <Filter>ソース ファイル\3d</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2d\DebugText.h">
@@ -164,6 +167,9 @@
     <ClInclude Include="3d\Model.h">
       <Filter>ヘッダー ファイル\3d</Filter>
     </ClInclude>
+    <ClInclude Include="3d\Object3d.h">
+      <Filter>ヘッダー ファイル\3d</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shaders\ParticleGS.hlsl">
@@ -181,12 +187,21 @@
     <FxCompile Include="Resources\shaders\SpriteVS.hlsl">
       <Filter>シェーダーファイル</Filter>
     </FxCompile>
+    <FxCompile Include="Resources\shaders\FBXPS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shaders\FBXVS.hlsl">
+      <Filter>シェーダーファイル</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\Particle.hlsli">
       <Filter>シェーダーファイル</Filter>
     </None>
     <None Include="Resources\shaders\Sprite.hlsli">
+      <Filter>シェーダーファイル</Filter>
+    </None>
+    <None Include="Resources\shaders\FBX.hlsli">
       <Filter>シェーダーファイル</Filter>
     </None>
   </ItemGroup>
