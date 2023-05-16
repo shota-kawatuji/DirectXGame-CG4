@@ -2,6 +2,7 @@
 
 #include "Model.h"
 #include "Camera.h"
+#include "FbxLoader.h"
 
 #include <Windows.h>
 #include <wrl.h>
@@ -21,6 +22,10 @@ protected: // エイリアス
 	using XMFLOAT4 = DirectX::XMFLOAT4;
 	using XMMATRIX = DirectX::XMMATRIX;
 
+public: // 定数
+	// ボーンの最大級
+	//static const int MAX_BONES = 32;
+
 public: // サブクラス
 	// 定数バッファ用データ構造体(座標変換行列)
 	struct ConstBufferDataTransform
@@ -29,6 +34,12 @@ public: // サブクラス
 		XMMATRIX world;			// ワールド行列
 		XMFLOAT3 carmeraPos;	// カメラ座標
 	};
+
+	//// 定数バッファ用データ構造体(スキニング)
+	//struct ConstBufferDataSkin
+	//{
+	//	XMMATRIX bones[MAX_BONES];
+	//};
 
 public: // 静的メンバ関数
 	// setter
@@ -75,6 +86,8 @@ public: // メンバ関数
 protected: // メンバ変数
 	// 定数バッファ
 	ComPtr<ID3D12Resource> constBuffTransform;
+	// 定数バッファ(スキン)
+	//ComPtr<ID3D12Resource> constBuffSkin;
 	// ローカルスケール
 	XMFLOAT3 scale = { 1,1,1 };
 	// X,Y,Z軸回りのローカル回転角

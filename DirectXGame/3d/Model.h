@@ -7,6 +7,7 @@
 #include <wrl.h>
 #include <d3d12.h>
 #include <d3dx12.h>
+#include <fbxsdk.h>
 
 struct Node
 {
@@ -24,6 +25,21 @@ struct Node
 	DirectX::XMMATRIX globalTransform;
 	// 親ノード
 	Node* parent = nullptr;
+};
+
+// ボーン構造体
+struct Bone
+{
+	// 名前
+	std::string name;
+	// 初期姿勢の逆行列
+	DirectX::XMMATRIX invInitialPose;
+	// クラスター(FBX側のボーン情報)
+	FbxCluster* fbxCluster;
+	// コンストラクタ
+	Bone(const std::string& name) {
+		this->name = name;
+	}
 };
 
 class Model
@@ -45,22 +61,35 @@ private: // エイリアス
 	using string = std::string;
 	template <class T> using vector = std::vector<T>;
 
+public: // 定数
+	// ボーンインデックスの最大数
+	static const int MAX_BONE_INDICES = 4;
+
 public: // サブクラス
 	// 頂点データ
-	struct VertexPosNormalUv
+	struct VertexPosNormalUvSkin
 	{
 		DirectX::XMFLOAT3 pos;
 		DirectX::XMFLOAT3 normal;
 		DirectX::XMFLOAT2 uv;
+		UINT boneIndex[MAX_BONE_INDICES];	// ボーン 番号
+		float boneWeight[MAX_BONE_INDICES]; // ボーン 重み
 	};
 
 public: //  メンバ関数
+	// デストラクタ
+	~Model();
 	// バッファ生成
 	void CreateBuffers(ID3D12Device* device);
 	// 描画
 	void Draw(ID3D12GraphicsCommandList* cmdList);
 	// モデルの変換行列取得
 	const XMMATRIX& GetModelTransform() { return meshNode->globalTransform; }
+
+public: // アクセッサ
+	// getter
+	vector<Bone>& GetBones() { return bones; }
+	FbxScene* GetFbxScene() { return fbxScene; }
 
 private: // メンバ変数
 	// モデル名
@@ -69,8 +98,10 @@ private: // メンバ変数
 	vector<Node> nodes;
 	// メッシュを持つノード
 	Node* meshNode = nullptr;
+	// FBXシーン
+	FbxScene* fbxScene = nullptr;
 	// 頂点データ配列
-	vector<VertexPosNormalUv> vertices;
+	vector<VertexPosNormalUvSkin> vertices;
 	// 頂点インデックス
 	vector<unsigned short> indices;
 	// アンビエント係数
@@ -81,6 +112,8 @@ private: // メンバ変数
 	TexMetadata metadata = {};
 	// スクラッチイメージ
 	ScratchImage scratchImg = {};
+	// ボーン配列
+	vector<Bone> bones;
 
 	// 頂点バッファ
 	ComPtr<ID3D12Resource> vertBuff;

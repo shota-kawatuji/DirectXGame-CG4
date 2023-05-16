@@ -13,12 +13,29 @@ class FbxLoader
 private: // エイリアス
 	// std::を省略
 	using string = std::string;
+	using XMMATRIX = DirectX::XMMATRIX;
 
 private: // 定数
 	// モデル格納ルートパス
 	static const string baseDirectory;
 	// テクスチャがない場合の構造テクスチャファイル名
 	static const string defaultTextureFileName;
+
+public: // 静的メンバ関数
+	/// <summary>
+	/// シングルトンインスタンスの取得
+	/// </summary>
+	/// <returns>インスタンス</returns>
+	static FbxLoader* GetInstance();
+
+	/// <summary>
+	/// FBXの行列をXMMatrixに変換
+	/// </summary>
+	/// <param name="dst">書き込み先</param>
+	/// <param name="src">元となるFBX行列</param>
+	static void ConvertMatrixFromFbx(XMMATRIX* dst, const FbxAMatrix& src);
+
+private: // メンバ変数
 
 public: // メンバ関数
 	/// <summary>
@@ -61,18 +78,14 @@ public: // メンバ関数
 	// テクスチャ読み込み
 	void LoadTexture(Model* model, const std::string& fullpath);
 
+	// スキニング情報の読み取り
+	void ParseSkin(Model* model, FbxMesh* fbxMesh);
+
 public:
 	// ディレクトリを含んだファイルパスからファイル名を抽出する
 	string ExtractFileName(const string& path);
 
-public:
-	/// <summary>
-	/// シングルトンインスタンスの取得
-	/// </summary>
-	/// <returns>インスタンス</returns>
-	static FbxLoader* GetInstance();
-
-private:
+private: // メンバ変数
 	// privateなコンストラクタ（シングルトンパターン）
 	FbxLoader() = default;
 	// privateなデストラクタ（シングルトンパターン）

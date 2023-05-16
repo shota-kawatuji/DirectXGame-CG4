@@ -5,12 +5,22 @@ cbuffer cbuff0 : register(b0)
 	float3 cameraPos;	// カメラ座標(ワールド座標)
 };
 
+//// ボーンの最大数
+//static const int MAX_BONES = 32;
+//
+//cbuffer skinning:register(b3) // ボーンスキニング行列が入る
+//{
+//	matrix matSkinning[MAX_BONES];
+//};
+
 // パーティクルバッファーの入力
 struct VSInput
 {
-	float4 pos : POSITION;	// 位置
-	float3 normal : NORMAL; // 頂点法線
-	float2 uv : TEXCOORD;	// テクスチャ座標
+	float4 pos : POSITION;				// 位置
+	float3 normal : NORMAL;				// 頂点法線
+	float2 uv : TEXCOORD;				// テクスチャ座標
+	//uint4 boneIndices : BONEINDICES;	// ボーン番号
+	//float4 boneWeights : BONEWEIGHT;		// ボーンのスキンウェイト
 };
 
 // 頂点シェーダーからピクセルシェーダーへのやり取りに使用する構造体
