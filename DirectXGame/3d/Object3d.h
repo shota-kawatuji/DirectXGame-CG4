@@ -24,7 +24,7 @@ protected: // エイリアス
 
 public: // 定数
 	// ボーンの最大級
-	//static const int MAX_BONES = 32;
+	static const int MAX_BONES = 32;
 
 public: // サブクラス
 	// 定数バッファ用データ構造体(座標変換行列)
@@ -35,11 +35,11 @@ public: // サブクラス
 		XMFLOAT3 carmeraPos;	// カメラ座標
 	};
 
-	//// 定数バッファ用データ構造体(スキニング)
-	//struct ConstBufferDataSkin
-	//{
-	//	XMMATRIX bones[MAX_BONES];
-	//};
+	// 定数バッファ用データ構造体(スキニング)
+	struct ConstBufferDataSkin
+	{
+		XMMATRIX bones[MAX_BONES];
+	};
 
 public: // 静的メンバ関数
 	// setter
@@ -87,7 +87,7 @@ protected: // メンバ変数
 	// 定数バッファ
 	ComPtr<ID3D12Resource> constBuffTransform;
 	// 定数バッファ(スキン)
-	//ComPtr<ID3D12Resource> constBuffSkin;
+	ComPtr<ID3D12Resource> constBuffSkin;
 	// ローカルスケール
 	XMFLOAT3 scale = { 1,1,1 };
 	// X,Y,Z軸回りのローカル回転角

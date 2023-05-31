@@ -33,7 +33,7 @@ public: // 静的メンバ関数
 	/// </summary>
 	/// <param name="dst">書き込み先</param>
 	/// <param name="src">元となるFBX行列</param>
-	static void ConvertMatrixFromFbx(XMMATRIX* dst, const FbxAMatrix& src);
+	static void ConvertMatrixFromFbx(DirectX::XMMATRIX* dst, const FbxAMatrix& src);
 
 private: // メンバ変数
 

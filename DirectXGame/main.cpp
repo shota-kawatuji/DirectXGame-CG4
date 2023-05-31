@@ -7,19 +7,19 @@
 #include "FbxLoader.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
-int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int)
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	// 汎用機能
 	WinApp* win = nullptr;
 	DirectXCommon* dxCommon = nullptr;
-	Input* input = nullptr;	
+	Input* input = nullptr;
 	Audio* audio = nullptr;
 	GameScene* gameScene = nullptr;
 
 	// ゲームウィンドウの作成
 	win = new WinApp();
 	win->CreateGameWindow();
-		
+
 	//DirectX初期化処理
 	dxCommon = new DirectXCommon();
 	dxCommon->Initialize(win);
@@ -42,23 +42,23 @@ int WINAPI WinMain(HINSTANCE,HINSTANCE,LPSTR,int)
 		assert(0);
 		return 1;
 	}
+	// FBX読み込み初期化
+	FbxLoader::GetInstance()->Initialize(dxCommon->GetDevice());
 	// ライト静的初期化
 	LightGroup::StaticInitialize(dxCommon->GetDevice());
 	// パーティクルマネージャ初期化
 	ParticleManager::GetInstance()->Initialize(dxCommon->GetDevice());
-	// FBX読み込み初期化
-	FbxLoader::GetInstance()->Initialize(dxCommon->GetDevice());
 #pragma endregion
 
 	// ゲームシーンの初期化
 	gameScene = new GameScene();
 	gameScene->Initialize(dxCommon, input, audio);
-	
+
 	// メインループ
 	while (true)
 	{
 		// メッセージ処理
-		if (win->ProcessMessage()) {	break; }
+		if (win->ProcessMessage()) { break; }
 
 		// 入力関連の毎フレーム処理
 		input->Update();

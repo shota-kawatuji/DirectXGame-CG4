@@ -27,21 +27,6 @@ struct Node
 	Node* parent = nullptr;
 };
 
-// ボーン構造体
-struct Bone
-{
-	// 名前
-	std::string name;
-	// 初期姿勢の逆行列
-	DirectX::XMMATRIX invInitialPose;
-	// クラスター(FBX側のボーン情報)
-	FbxCluster* fbxCluster;
-	// コンストラクタ
-	Bone(const std::string& name) {
-		this->name = name;
-	}
-};
-
 class Model
 {
 public:
@@ -76,6 +61,21 @@ public: // サブクラス
 		float boneWeight[MAX_BONE_INDICES]; // ボーン 重み
 	};
 
+	// ボーン構造体
+	struct Bone
+	{
+		// 名前
+		std::string name;
+		// 初期姿勢の逆行列
+		DirectX::XMMATRIX invInitialPose;
+		// クラスター(FBX側のボーン情報)
+		FbxCluster* fbxCluster;
+		// コンストラクタ
+		Bone(const std::string& name) {
+			this->name = name;
+		}
+	};
+
 public: //  メンバ関数
 	// デストラクタ
 	~Model();
@@ -88,22 +88,25 @@ public: //  メンバ関数
 
 public: // アクセッサ
 	// getter
-	vector<Bone>& GetBones() { return bones; }
+	std::vector<Bone>& GetBones() { return bones; }
 	FbxScene* GetFbxScene() { return fbxScene; }
 
 private: // メンバ変数
 	// モデル名
-	string name;
+	std::string name;
 	// ノード配列
-	vector<Node> nodes;
+	std::vector<Node> nodes;
+	// ボーン配列
+	std::vector<Bone> bones;
+
 	// メッシュを持つノード
 	Node* meshNode = nullptr;
 	// FBXシーン
 	FbxScene* fbxScene = nullptr;
 	// 頂点データ配列
-	vector<VertexPosNormalUvSkin> vertices;
+	std::vector<VertexPosNormalUvSkin> vertices;
 	// 頂点インデックス
-	vector<unsigned short> indices;
+	std::vector<unsigned short> indices;
 	// アンビエント係数
 	XMFLOAT3 ambient = { 1,1,1 };
 	// ディフューズ係数
@@ -112,8 +115,6 @@ private: // メンバ変数
 	TexMetadata metadata = {};
 	// スクラッチイメージ
 	ScratchImage scratchImg = {};
-	// ボーン配列
-	vector<Bone> bones;
 
 	// 頂点バッファ
 	ComPtr<ID3D12Resource> vertBuff;

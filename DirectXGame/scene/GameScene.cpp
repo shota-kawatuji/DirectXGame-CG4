@@ -65,7 +65,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
 
 	// モデル名を指定してファイル読み込み
 	/*FbxLoader::GetInstance()->LoadModelFromFile("cube");*/
-	model1 = FbxLoader::GetInstance()->LoadModelFromFile("cube");
+	model1 = FbxLoader::GetInstance()->LoadModelFromFile("boneTest");
 
 	// 3Dオブジェクト生成とモデルのセット
 	object1 = new Object3d;
@@ -76,8 +76,10 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
 	lightGroup = LightGroup::Create();
 
 	// カメラ注視点をセット
-	camera->SetTarget({ 0, 20, 0 });
-	camera->SetDistance(100.0f);
+	camera->SetTarget({ 0, 3, 0 });
+	camera->SetDistance(10.0f);
+	//camera->SetTarget({ 0, 20, 0 });
+	//camera->SetDistance(100.0f);
 }
 
 void GameScene::Update()
@@ -124,7 +126,6 @@ void GameScene::Draw()
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
-
 
 	// デバッグテキストの描画
 	debugText->DrawAll(cmdList);

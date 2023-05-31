@@ -10,12 +10,26 @@ void Model::CreateBuffers(ID3D12Device* device)
 {
 	HRESULT result;
 	// 頂点データ全体のサイズ
-	UINT sizeVB = static_cast<UINT>(sizeof(VertexPosNormalUvSkin) * vertices.size());
+	UINT sizeVB = static_cast<UINT>(sizeof(VertexPosNormalUvSkin) *
+		vertices.size());
+
+	CD3DX12_HEAP_PROPERTIES heapprop{};
+	heapprop.Type = D3D12_HEAP_TYPE_UPLOAD;
+
+	CD3DX12_RESOURCE_DESC resdesc{};
+	resdesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+	resdesc.Width = sizeVB;
+	resdesc.Height = 1;
+	resdesc.DepthOrArraySize = 1;
+	resdesc.MipLevels = 1;
+	resdesc.SampleDesc.Count = 1;
+	resdesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
 	// 頂点バッファ生成
 	result = device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+		&heapprop,
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(sizeVB),
+		&resdesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&vertBuff));
@@ -31,16 +45,21 @@ void Model::CreateBuffers(ID3D12Device* device)
 	vbView.BufferLocation = vertBuff->GetGPUVirtualAddress();
 	vbView.SizeInBytes = sizeVB;
 	vbView.StrideInBytes = sizeof(vertices[0]);
+
 	// 頂点インデックス全体のサイズ
-	UINT sizeIB = static_cast<UINT>(sizeof(unsigned short) * indices.size());
+	UINT sizeIB = static_cast<UINT>(sizeof(unsigned short) *
+		indices.size());
+	ID3D12Resource* indexBuff = nullptr;
+	resdesc.Width = sizeIB;
 	// インデックスバッファ生成
 	result = device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+		&heapprop,
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(sizeIB),
+		&resdesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&indexBuff));
+
 	// インデックスバッファへのデータ転送
 	unsigned short* indexMap = nullptr;
 	result = indexBuff->Map(0, nullptr, (void**)&indexMap);
@@ -56,19 +75,23 @@ void Model::CreateBuffers(ID3D12Device* device)
 	const DirectX::Image* img = scratchImg.GetImage(0, 0, 0);
 	assert(img);
 
+	CD3DX12_HEAP_PROPERTIES texHeapProp{};
+	texHeapProp.Type = D3D12_HEAP_TYPE_CUSTOM;
+	texHeapProp.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
+	texHeapProp.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
+
 	// リソース設定
 	CD3DX12_RESOURCE_DESC texresDesc = CD3DX12_RESOURCE_DESC::Tex2D(
 		metadata.format,
 		metadata.width,
 		(UINT)metadata.height,
-		(UINT)metadata.arraySize,
-		(UINT)metadata.mipLevels
+		(UINT16)metadata.arraySize,
+		(UINT16)metadata.mipLevels
 	);
 
 	// テクスチャ用バッファの生成
 	result = device->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK,
-			D3D12_MEMORY_POOL_L0),
+		&texHeapProp,
 		D3D12_HEAP_FLAG_NONE,
 		&texresDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
