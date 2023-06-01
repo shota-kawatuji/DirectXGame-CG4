@@ -76,8 +76,11 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
 	lightGroup = LightGroup::Create();
 
 	// カメラ注視点をセット
-	camera->SetTarget({ 0, 3, 0 });
+	camera->SetTarget({ 0,2.5f,0 });
 	camera->SetDistance(10.0f);
+	object1->SetRotation({ 0,90,0 });
+	//camera->SetTarget({ 0, 3, 0 });
+	//camera->SetDistance(10.0f);
 	//camera->SetTarget({ 0, 20, 0 });
 	//camera->SetDistance(100.0f);
 }

@@ -61,6 +61,9 @@ private: // 静的メンバ変数
 	// パイプラインステートオブジェクト
 	static ComPtr<ID3D12PipelineState> pipelinestate;
 
+public: // アクセッサ
+	void SetRotation(XMFLOAT3 rotation) { this->rotation = rotation; }
+
 public: // メンバ関数
 	/// <summary>
 	/// 初期化
