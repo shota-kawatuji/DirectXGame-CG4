@@ -35,7 +35,15 @@ public: // 静的メンバ関数
 	/// <param name="src">元となるFBX行列</param>
 	static void ConvertMatrixFromFbx(DirectX::XMMATRIX* dst, const FbxAMatrix& src);
 
-private: // メンバ変数
+private:
+	// privateなコンストラクタ（シングルトンパターン）
+	FbxLoader() = default;
+	// privateなデストラクタ（シングルトンパターン）
+	~FbxLoader() = default;
+	// コピーコンストラクタを禁止（シングルトンパターン）
+	FbxLoader(const FbxLoader& obj) = delete;
+	// コピー代入演算子を禁止（シングルトンパターン）
+	void operator=(const FbxLoader& obj) = delete;
 
 public: // メンバ関数
 	/// <summary>
@@ -60,7 +68,7 @@ public: // メンバ関数
 	/// </summary>
 	/// <param name="model">読み込み先モデルオブジェクト</param>
 	/// <param name="fbxNode">解析対象のノード</param>
-	void PerseNodeRecursive(Model* model, FbxNode* fbxNode, Node* parent = nullptr);
+	void ParseNodeRecursive(Model* model, FbxNode* fbxNode, Node* parent = nullptr);
 
 	/// <summary>
 	/// メッシュ読み取り
@@ -77,23 +85,12 @@ public: // メンバ関数
 	void ParseMaterial(Model* model, FbxNode* fbxNode);
 	// テクスチャ読み込み
 	void LoadTexture(Model* model, const std::string& fullpath);
-
 	// スキニング情報の読み取り
 	void ParseSkin(Model* model, FbxMesh* fbxMesh);
-
-public:
 	// ディレクトリを含んだファイルパスからファイル名を抽出する
 	string ExtractFileName(const string& path);
 
 private: // メンバ変数
-	// privateなコンストラクタ（シングルトンパターン）
-	FbxLoader() = default;
-	// privateなデストラクタ（シングルトンパターン）
-	~FbxLoader() = default;
-	// コピーコンストラクタを禁止（シングルトンパターン）
-	FbxLoader(const FbxLoader& obj) = delete;
-	// コピー代入演算子を禁止（シングルトンパターン）
-	void operator=(const FbxLoader& obj) = delete;
 	// ID3D12デバイス
 	ID3D12Device* device = nullptr;
 	// FBXマネージャ

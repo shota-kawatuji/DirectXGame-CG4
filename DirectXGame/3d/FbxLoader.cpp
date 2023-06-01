@@ -6,8 +6,25 @@ using namespace DirectX;
 /// 静的メンバ変数の実体
 /// </summary>
 const std::string FbxLoader::baseDirectory = "Resources/";
-
 const std::string FbxLoader::defaultTextureFileName = "white1x1.png";
+
+FbxLoader* FbxLoader::GetInstance()
+{
+	static FbxLoader instance;
+	return &instance;
+}
+
+void FbxLoader::ConvertMatrixFromFbx(DirectX::XMMATRIX* dst, const FbxAMatrix& src)
+{
+	// 行
+	for (int i = 0; i < 4; i++) {
+		// 列
+		for (int j = 0; j < 4; j++) {
+			// 1要素コピー
+			dst->r[i].m128_f32[j] = (float)src.Get(i, j);
+		}
+	}
+}
 
 void FbxLoader::Initialize(ID3D12Device* device)
 {
@@ -36,9 +53,9 @@ Model* FbxLoader::LoadModelFromFile(const string& modelName)
 	// モデルと同じ名前のフォルダから読み込む
 	const string directoryPath = baseDirectory + modelName + "/";
 	// 拡張子.fbxを追加
-	const string filename = modelName + ".fbx";
+	const string fileName = modelName + ".fbx";
 	// 連結してフルパスを得る
-	const string fullpath = directoryPath + filename;
+	const string fullpath = directoryPath + fileName;
 	// ファイル名を指定してFBXファイルを読み込む
 	if (!fbxImporter->Initialize(fullpath.c_str(),
 		-1, fbxManager->GetIOSettings())) {
@@ -58,21 +75,21 @@ Model* FbxLoader::LoadModelFromFile(const string& modelName)
 	// あらかじめ必要分のメモリを確保することで、アドレスがずれるのを予防
 	model->nodes.reserve(nodeCount);
 	// ルートノードから順に解析してモデルに流し込む
-	PerseNodeRecursive(model, fbxScene->GetRootNode());
+	ParseNodeRecursive(model, fbxScene->GetRootNode());
 	// FBXシーン解放
+	//fbxScene->Destory();
 	model->fbxScene = fbxScene;
 
 	// バッファ生成
 	model->CreateBuffers(device);
 
-	//fbxScene->Destory();
 	return model;
 }
 
-void FbxLoader::PerseNodeRecursive(Model* model, FbxNode* fbxNode, Node* parent)
+void FbxLoader::ParseNodeRecursive(Model* model, FbxNode* fbxNode, Node* parent)
 {
 	// ノード名を取得
-	//string name = fbxNode->GetName();
+	string name = fbxNode->GetName();
 	// モデルにノードを追加
 	model->nodes.emplace_back();
 	Node& node = model->nodes.back();
@@ -94,16 +111,16 @@ void FbxLoader::PerseNodeRecursive(Model* model, FbxNode* fbxNode, Node* parent)
 	node.rotation.m128_f32[2] = XMConvertToRadians(node.rotation.m128_f32[2]);
 
 	// スケール、回転、平行移動行列の計算
-	XMMATRIX matScaling, matRotation, matTransration;
+	XMMATRIX matScaling, matRotation, matTranslation;
 	matScaling = XMMatrixScalingFromVector(node.scaling);
 	matRotation = XMMatrixRotationRollPitchYawFromVector(node.rotation);
-	matTransration = XMMatrixTranslationFromVector(node.translation);
+	matTranslation = XMMatrixTranslationFromVector(node.translation);
 
 	// ローカル変形行列の計算
 	node.transform = XMMatrixIdentity();
 	node.transform *= matScaling;
 	node.transform *= matRotation;
-	node.transform *= matTransration;
+	node.transform *= matTranslation;
 
 	// グローバル変形行列の計算
 	node.globalTransform = node.transform;
@@ -126,7 +143,7 @@ void FbxLoader::PerseNodeRecursive(Model* model, FbxNode* fbxNode, Node* parent)
 
 	// 子ノードに対して再起呼び出し
 	for (int i = 0; i < fbxNode->GetChildCount(); i++) {
-		PerseNodeRecursive(model, fbxNode->GetChild(i), &node);
+		ParseNodeRecursive(model, fbxNode->GetChild(i), &node);
 	}
 }
 
@@ -176,7 +193,7 @@ void FbxLoader::ParseMeshFaces(Model* model, FbxMesh* fbxMesh)
 	assert(indices.size() == 0);
 	// 面の数
 	const int polygonCount = fbxMesh->GetPolygonCount();
-	// UIデータの数
+	// UVデータの数
 	const int textureUVCount = fbxMesh->GetTextureUVCount();
 	// UV名リスト
 	FbxStringList uvNames;
@@ -200,36 +217,36 @@ void FbxLoader::ParseMeshFaces(Model* model, FbxMesh* fbxMesh)
 				vertex.normal.x = (float)normal[0];
 				vertex.normal.y = (float)normal[1];
 				vertex.normal.z = (float)normal[2];
-			}
 
-			// テクスチャUV読込
-			if (textureUVCount > 0) {
-				FbxVector2 uvs;
-				bool lUnmappedUV;
-				// 0番決め打ちで読込
-				if (fbxMesh->GetPolygonVertexUV(i, j, uvNames[0], uvs, lUnmappedUV)) {
-					vertex.uv.x = (float)uvs[0];
-					vertex.uv.y = (float)uvs[1];
+				// テクスチャUV読込
+				if (textureUVCount > 0) {
+					FbxVector2 uvs;
+					bool lUnmappedUV;
+					// 0番決め打ちで読込
+					if (fbxMesh->GetPolygonVertexUV(i, j, uvNames[0], uvs, lUnmappedUV)) {
+						vertex.uv.x = (float)uvs[0];
+						vertex.uv.y = (float)uvs[1];
+					}
+
+					// インデックス配列に頂点インデックスを追加
+					// 3頂点目までなら
+					if (j < 3) {
+						// 1点追加し、他の2点を三角形を構築する
+						indices.push_back(index);
+					}
+
+					// 4頂点目
+					else {
+						// 3点追加し
+						// 四角形の0,1,2,3の内 2,3,0で三角形を構築する
+						int index2 = indices[indices.size() - 1];
+						int index3 = index;
+						int index0 = indices[indices.size() - 3];
+						indices.push_back(index2);
+						indices.push_back(index3);
+						indices.push_back(index0);
+					}
 				}
-			}
-
-			// インデックス配列に頂点インデックスを追加
-			// 3頂点目まえｄなら
-			if (j < 3) {
-				// 1点追加し、他の2点を三角形を構築する
-				indices.push_back(index);
-			}
-
-			// 4頂点目
-			else {
-				// 3点追加し
-				// 四角形の0,1,2,3の内 2,3,0で三角形を構築する
-				int index2 = indices[indices.size() - 1];
-				int index3 = index;
-				int index0 = indices[indices.size() - 3];
-				indices.push_back(index2);
-				indices.push_back(index3);
-				indices.push_back(index0);
 			}
 		}
 	}
@@ -262,10 +279,6 @@ void FbxLoader::ParseMaterial(Model* model, FbxNode* fbxNode)
 				model->diffuse.z = (float)diffuse.Get()[2];
 			}
 		}
-		// テクスチャがない場合は白テクスチャを貼る
-		if (!textureLoaded) {
-			LoadTexture(model, baseDirectory + defaultTextureFileName);
-		}
 
 		// ディフーズテクスチャを取り出す
 		const FbxProperty diffuseProperty =
@@ -283,7 +296,28 @@ void FbxLoader::ParseMaterial(Model* model, FbxNode* fbxNode)
 				textureLoaded = true;
 			}
 		}
+		// テクスチャがない場合は白テクスチャを貼る
+		if (!textureLoaded) {
+			LoadTexture(model, baseDirectory + defaultTextureFileName);
+		}
 	}
+}
+
+std::string FbxLoader::ExtractFileName(const string& path)
+{
+	size_t pos1;
+	// 区切り文字 '\\' が出てくる一番最後の部分を検索
+	pos1 = path.rfind('\\');
+	if (pos1 != string::npos) {
+		return path.substr(pos1 + 1, path.size() - pos1 - 1);
+	}
+	// 区切り文字 '/' が出てくる一番最後の部分を検索
+	pos1 = path.rfind('/');
+	if (pos1 != string::npos) {
+		return path.substr(pos1 + 1, path.size() - pos1 - 1);
+	}
+
+	return path;
 }
 
 void FbxLoader::LoadTexture(Model* model, const std::string& fullpath)
@@ -309,6 +343,13 @@ void FbxLoader::ParseSkin(Model* model, FbxMesh* fbxMesh)
 			FbxDeformer::eSkin));
 	// スキニング情報がなければ終了
 	if (fbxSkin == nullptr) {
+		// 各頂点について処理
+		for (int i = 0; i < model->vertices.size(); i++) {
+			// 最初のボーン(単位行列)の影響100%にする
+			model->vertices[i].boneIndex[0] = 0;
+			model->vertices[i].boneWeight[0] = 1.0f;
+		}
+
 		return;
 	}
 
@@ -336,7 +377,7 @@ void FbxLoader::ParseSkin(Model* model, FbxMesh* fbxMesh)
 
 		// FBXから初期姿勢行列を取得する
 		FbxAMatrix fbxMat;
-		fbxCluster->SetTransformLinkMatrix(fbxMat);
+		fbxCluster->GetTransformLinkMatrix(fbxMat);
 
 		// XMMatrix型に変換する
 		XMMATRIX initialPose;
@@ -409,41 +450,6 @@ void FbxLoader::ParseSkin(Model* model, FbxMesh* fbxMesh)
 				vertices[i].boneWeight[0] = 1.0f - weight;
 				break;
 			}
-		}
-	}
-}
-
-std::string FbxLoader::ExtractFileName(const string& path)
-{
-	size_t pos1;
-	// 区切り文字 '\\' が出てくる一番最後の部分を検索
-	pos1 = path.rfind('\\');
-	if (pos1 != string::npos) {
-		return path.substr(pos1 + 1, path.size() - pos1 - 1);
-	}
-	// 区切り文字 '/' が出てくる一番最後の部分を検索
-	pos1 = path.rfind('/');
-	if (pos1 != string::npos) {
-		return path.substr(pos1 + 1, path.size() - pos1 - 1);
-	}
-
-	return path;
-}
-
-FbxLoader* FbxLoader::GetInstance()
-{
-	static FbxLoader instance;
-	return &instance;
-}
-
-void FbxLoader::ConvertMatrixFromFbx(DirectX::XMMATRIX* dst, const FbxAMatrix& src)
-{
-	// 行
-	for (int i = 0; i < 4; i++) {
-		// 列
-		for (int j = 0; j < 4; j++) {
-			// 1要素コピー
-			dst->r[i].m128_f32[j] = (float)src.Get(i, j);
 		}
 	}
 }
