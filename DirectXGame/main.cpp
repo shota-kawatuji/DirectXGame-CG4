@@ -50,9 +50,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	LightGroup::StaticInitialize(dxCommon->GetDevice());
 	// パーティクルマネージャ初期化
 	ParticleManager::GetInstance()->Initialize(dxCommon->GetDevice());
-	// ポストエフェクト用テクスチャの読み込み
-	Sprite::LoadTexture(100, L"Resources/white1x1.png");
 	// ポストエフェクトの初期化
+	// ポストエフェクト用テクスチャの読み込み
+	//Sprite::LoadTexture(100, L"Resources/white1x1.png");
 	postEffect = new PostEffect();
 	postEffect->Initialize();
 
