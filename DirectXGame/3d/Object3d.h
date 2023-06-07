@@ -32,7 +32,7 @@ public: // サブクラス
 	{
 		XMMATRIX viewProj;		// ビュープロジェクション行列
 		XMMATRIX world;			// ワールド行列
-		XMFLOAT3 carmeraPos;	// カメラ座標
+		XMFLOAT3 cameraPos;	// カメラ座標
 	};
 
 	// 定数バッファ用データ構造体(スキニング)

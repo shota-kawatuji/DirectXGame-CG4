@@ -5,7 +5,7 @@ cbuffer cbuff0 : register(b0)
 	float3 cameraPos;	// カメラ座標(ワールド座標)
 };
 
-// パーティクルバッファーの入力
+// バーテックスバッファーの入力
 struct VSInput
 {
 	float4 pos : POSITION;				// 位置

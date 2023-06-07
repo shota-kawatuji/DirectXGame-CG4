@@ -273,7 +273,7 @@ void Object3d::Update()
 	if (SUCCEEDED(result)) {
 		constMap->viewProj = matViewProjection;
 		constMap->world = modelTransform * matWorld;
-		constMap->carmeraPos = cameraPos;
+		constMap->cameraPos = cameraPos;
 		constBuffTransform->Unmap(0, nullptr);
 	}
 
