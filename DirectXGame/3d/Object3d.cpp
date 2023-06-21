@@ -86,16 +86,6 @@ void Object3d::CreateGraphicsPipeline()
 			D3D12_APPEND_ALIGNED_ELEMENT,
 			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0
 		},
-		//{ // 影響を受けるボーン番号(4つ)
-		//	"BONEINDICES",0,DXGI_FORMAT_R32G32B32A32_UINT,0,
-		//	D3D12_APPEND_ALIGNED_ELEMENT,
-		//	D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0
-		//},
-		//{ // ボーンのスキンウェイト(4つ)
-		//	"BONEWEIGHTS",0,DXGI_FORMAT_R32G32B32A32_FLOAT,0,
-		//	D3D12_APPEND_ALIGNED_ELEMENT,
-		//	D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,0
-		//},
 	};
 
 	// グラフィックスパイプラインの流れを設定
@@ -186,15 +176,6 @@ void Object3d::Initialize()
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&constBuffTransform));
-
-	//// 定数バッファの生成
-	//result = device->CreateCommittedResource(
-	//	&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
-	//	D3D12_HEAP_FLAG_NONE,
-	//	&CD3DX12_RESOURCE_DESC::Buffer((sizeof(ConstBufferDataSkin) + 0xff) & ~0xff),
-	//	D3D12_RESOURCE_STATE_GENERIC_READ,
-	//	nullptr,
-	//	IID_PPV_ARGS(&constBuffSkin));
 }
 
 void Object3d::Update()
@@ -233,25 +214,6 @@ void Object3d::Update()
 		constMap->carmeraPos = cameraPos;
 		constBuffTransform->Unmap(0, nullptr);
 	}
-
-	//// ボーン配列
-	//std::vector<Bone>& bones = model->GetBones();
-
-	//// 定数バッファへデータ転送
-	//ConstBufferDataSkin* constMapSkin = nullptr;
-	//result = constBuffSkin->Map(0, nullptr, (void**)&constMapSkin);
-	//for (int i = 0; i < bones.size(); i++) {
-	//	// 今の姿勢行列
-	//	XMMATRIX matCurrentPose;
-	//	// 今の姿勢行列を取得
-	//	FbxAMatrix fbxCurrentPose =
-	//		bones[i].fbxCluster->GetLink()->EvaluateGlobalTransform(0);
-	//	// XMMATRIXに変換
-	//	FbxLoader::ConvertMatrixFromFbx(&matCurrentPose, fbxCurrentPose);
-	//	// 合成してスキニング行列に
-	//	constMapSkin->bones[i] = bones[i].invInitialPose * matCurrentPose;
-	//}
-	//constBuffSkin->Unmap(0, nullptr);
 }
 
 void Object3d::Draw(ID3D12GraphicsCommandList* cmdList)
