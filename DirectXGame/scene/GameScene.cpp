@@ -65,9 +65,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
 
 	// モデル名を指定してファイル読み込み
 	/*FbxLoader::GetInstance()->LoadModelFromFile("cube");*/
-	model1 = FbxLoader::GetInstance()->LoadModelFromFile("cube");
+	model1 = FbxLoader::GetInstance()->LoadModelFromFile("SpherePBR");
 
-	// 3Dオブジェクト生成とモデルのセット
 	object1 = new Object3d;
 	object1->Initialize();
 	object1->SetModel(model1);
@@ -76,8 +75,12 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
 	lightGroup = LightGroup::Create();
 
 	// カメラ注視点をセット
-	camera->SetTarget({ 0, 20, 0 });
-	camera->SetDistance(100.0f);
+	camera->SetTarget({ 0,0,0 });
+	camera->SetDistance(3.0f);
+	// 3Dオブジェクト生成とモデルのセット
+	//camera->SetTarget({ 0, 20, 0 });
+	//camera->SetDistance(100.0f);
+
 }
 
 void GameScene::Update()

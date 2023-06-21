@@ -127,4 +127,13 @@ private: // メンバ変数
 	D3D12_INDEX_BUFFER_VIEW ibView = {};
 	// SRV用デスクリプタヒープ
 	ComPtr<ID3D12DescriptorHeap> descHeapSRV;
+
+	// アルベド
+	XMFLOAT3 baseColor = { 1,1,1 };
+	// 金属度(0 or 1)
+	float metalness = 0.0f;
+	// 鏡面反射度(0 ~ 1)
+	float specular = 0.5f;
+	// 粗さ
+	float roughness = 0.0f;
 };
