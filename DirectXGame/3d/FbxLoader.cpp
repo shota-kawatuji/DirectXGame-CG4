@@ -243,22 +243,94 @@ void FbxLoader::ParseMaterial(Model* model, FbxNode* fbxNode)
 		// テクスチャを読み込んだかどうかを表すフラグ
 		bool textureLoaded = false;
 
-		if (material->GetClassId().Is(FbxSurfaceLambert::ClassId)) {
-			FbxSurfaceLambert* lambert =
-				static_cast<FbxSurfaceLambert*>(material);
+		if (material) {
+			// マテリアル名
+			string name = material->GetName();
 
-			// 環境光係数
-			FbxPropertyT<FbxDouble3> ambient = lambert->Ambient;
-			model->ambient.x = (float)ambient.Get()[0];
-			model->ambient.y = (float)ambient.Get()[1];
-			model->ambient.z = (float)ambient.Get()[2];
+			// ベースカラー
+			const FbxProperty propBaseColor =
+				FbxSurfaceMaterialUtils::GetProperty("baseColor", material);
+			if (propBaseColor.IsValid()) {
+				// FbxDouble3としてプロパティの値を読み取り
+				FbxDouble3 baseColor = propBaseColor.Get<FbxDouble3>();
+				// モデルに読み取った値を読み込む
+				model->baseColor.x = (float)baseColor.Buffer()[0];
+				model->baseColor.y = (float)baseColor.Buffer()[1];
+				model->baseColor.z = (float)baseColor.Buffer()[2];
+			}
+			// 金属度
+			const FbxProperty propMetalness = FbxSurfaceMaterialUtils::GetProperty("metalness", material);
+			if (propBaseColor.IsValid()) {
+				// モデルに読み取った値を書き込む
+				model->metalness = propMetalness.Get<float>();
+			}
+			// 隙間
+			const FbxProperty propSpecular = FbxSurfaceMaterialUtils::GetProperty("specular", material);
+			if (propSpecular.IsValid()) {
+				// モデルに読み取った値を書き込む
+				model->specular = propSpecular.Get<float>();
+			}
+			// 粗さ
+			const FbxProperty propSpecularRoughness = FbxSurfaceMaterialUtils::GetProperty("specularRoughness", material);
+			if (propSpecularRoughness.IsValid()) {
+				// モデルに読み取った値を書き込む
+				model->roughness = propSpecularRoughness.Get<float>();
+			}
 
-			// 拡散反射係数
-			FbxPropertyT<FbxDouble3> diffuse = lambert->Diffuse;
-			model->diffuse.x = (float)diffuse.Get()[0];
-			model->diffuse.y = (float)diffuse.Get()[1];
-			model->diffuse.z = (float)diffuse.Get()[2];
+			// サブサーフェス
+			const FbxProperty propSubsurface = FbxSurfaceMaterialUtils::GetProperty("subsurface", material);
+			if (propSubsurface.IsValid()) {
+				float subsurface = propSubsurface.Get<float>();
+			}
+			// 鏡面反射色
+			const FbxProperty propSpecularColor = FbxSurfaceMaterialUtils::GetProperty("specularColor", material);
+			if (propSpecularColor.IsValid()) {
+				FbxDouble3 specularColor = propSpecularColor.Get<FbxDouble3>();
+			}
+			// 異方性反射率
+			const FbxProperty propSpecularAnisotropy = FbxSurfaceMaterialUtils::GetProperty("specularAnisotropy", material);
+			if (propSpecularAnisotropy.IsValid()) {
+				float specularAnisotropy = propSpecularAnisotropy.Get<float>();
+			}
+			// ツヤ色
+			const FbxProperty propSheenColor = FbxSurfaceMaterialUtils::GetProperty("sheenColor", material);
+			if (propSheenColor.IsValid()) {
+				FbxDouble3 sheenColor = propSheenColor.Get<FbxDouble3>();
+			}
+			// ツヤ
+			const FbxProperty propSheen = FbxSurfaceMaterialUtils::GetProperty("sheen", material);
+			if (propSheen.IsValid()) {
+				float sheen = propSheen.Get<float>();
+			}
+			// クリア塗装の粗さ
+			const FbxProperty propCoatRoughness = FbxSurfaceMaterialUtils::GetProperty("coatRoughness", material);
+			if (propCoatRoughness.IsValid()) {
+				float coatRoughness = propCoatRoughness.Get<float>();
+			}
+			// クリア塗装
+			const FbxProperty propCoat = FbxSurfaceMaterialUtils::GetProperty("coat", material);
+			if (propCoat.IsValid()) {
+				float coat = propCoat.Get<float>();
+			}
+
+			if (material->GetClassId().Is(FbxSurfaceLambert::ClassId)) {
+				FbxSurfaceLambert* lambert =
+					static_cast<FbxSurfaceLambert*>(material);
+
+				// 環境光係数
+				FbxPropertyT<FbxDouble3> ambient = lambert->Ambient;
+				model->ambient.x = (float)ambient.Get()[0];
+				model->ambient.y = (float)ambient.Get()[1];
+				model->ambient.z = (float)ambient.Get()[2];
+
+				// 拡散反射係数
+				FbxPropertyT<FbxDouble3> diffuse = lambert->Diffuse;
+				model->diffuse.x = (float)diffuse.Get()[0];
+				model->diffuse.y = (float)diffuse.Get()[1];
+				model->diffuse.z = (float)diffuse.Get()[2];
+			}
 		}
+
 		// テクスチャがない場合は白テクスチャを貼る
 		if (!textureLoaded) {
 			LoadTexture(model, baseDirectory + defaultTextureFileName);
