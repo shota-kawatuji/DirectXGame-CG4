@@ -3,6 +3,7 @@
 #include "Model.h"
 #include "Camera.h"
 #include "FbxLoader.h"
+#include "LightGroup.h"
 
 #include <Windows.h>
 #include <wrl.h>
@@ -23,8 +24,6 @@ protected: // エイリアス
 	using XMMATRIX = DirectX::XMMATRIX;
 
 public: // 定数
-	// ボーンの最大級
-	//static const int MAX_BONES = 32;
 
 public: // サブクラス
 	// 定数バッファ用データ構造体(座標変換行列)
@@ -32,19 +31,14 @@ public: // サブクラス
 	{
 		XMMATRIX viewProj;		// ビュープロジェクション行列
 		XMMATRIX world;			// ワールド行列
-		XMFLOAT3 carmeraPos;	// カメラ座標
+		XMFLOAT3 cameraPos;	// カメラ座標
 	};
-
-	//// 定数バッファ用データ構造体(スキニング)
-	//struct ConstBufferDataSkin
-	//{
-	//	XMMATRIX bones[MAX_BONES];
-	//};
 
 public: // 静的メンバ関数
 	// setter
 	static void SetDevice(ID3D12Device* device) { Object3d::device = device; }
 	static void SetCamera(Camera* camera) { Object3d::camera = camera; }
+	static void SetLightGroup(LightGroup* lightGroup) { Object3d::lightGroup = lightGroup; }
 
 	/// <summary>
 	/// グラフィックスパイプラインの生成
@@ -56,6 +50,8 @@ private: // 静的メンバ変数
 	static ID3D12Device* device;
 	// カメラ
 	static Camera* camera;
+	// ライトグループ
+	static LightGroup* lightGroup;
 	// ルートシグネチャ
 	static ComPtr<ID3D12RootSignature> rootsignature;
 	// パイプラインステートオブジェクト
@@ -86,8 +82,6 @@ public: // メンバ関数
 protected: // メンバ変数
 	// 定数バッファ
 	ComPtr<ID3D12Resource> constBuffTransform;
-	// 定数バッファ(スキン)
-	//ComPtr<ID3D12Resource> constBuffSkin;
 	// ローカルスケール
 	XMFLOAT3 scale = { 1,1,1 };
 	// X,Y,Z軸回りのローカル回転角

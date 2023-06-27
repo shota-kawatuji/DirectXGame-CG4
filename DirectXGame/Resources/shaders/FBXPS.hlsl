@@ -6,13 +6,6 @@ SamplerState smp : register(s0);
 // エントリーポイント
 float4 main(VSOutput input) : SV_TARGET
 {
-	// テクスチャマッピング
-	float4 texcolor = tex.Sample(smp,input.uv);
-	// Lambert反射
-	float3 light = normalize(float3(1, -1, 1)); // 右下奥 向きのライト
-	float diffuse = saturate(dot(-light, input.normal));
-	float brightness = diffuse + 0.3f;
-	float4 shadecolor = float4(brightness, brightness, brightness, 1.0f);
-	// 陰影とテクスチャの色を合成
-	return shadecolor * texcolor;
+	// ライトのアンビエントカラーをRGBとして塗る
+	return float4(ambientLightColor,1);
 }

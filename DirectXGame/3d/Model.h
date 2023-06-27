@@ -76,6 +76,20 @@ public: // サブクラス
 		float boneWeight[MAX_BONE_INDICES]; // ボーン 重み
 	};
 
+	struct ConstBufferDataMaterial
+	{
+		// アルベド
+		XMFLOAT3 baseColor;
+		// 金属度
+		float metalness;
+		// 鏡面反射度
+		float specular;
+		// 粗さ
+		float roughness;
+		// パディング(16Byte境界)
+		float pad[2];
+	};
+
 public: //  メンバ関数
 	// デストラクタ
 	~Model();
@@ -127,6 +141,8 @@ private: // メンバ変数
 	D3D12_INDEX_BUFFER_VIEW ibView = {};
 	// SRV用デスクリプタヒープ
 	ComPtr<ID3D12DescriptorHeap> descHeapSRV;
+	// 定数バッファ(マテリアル)
+	ComPtr<ID3D12Resource> constBuffMaterial;
 
 	// アルベド
 	XMFLOAT3 baseColor = { 1,1,1 };

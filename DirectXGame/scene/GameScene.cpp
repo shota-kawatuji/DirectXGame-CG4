@@ -39,6 +39,8 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
 	Object3d::SetCamera(camera);
 	// グラフィックスパイプライン生成
 	Object3d::CreateGraphicsPipeline();
+	// ライトグループをセット
+	Object3d::SetLightGroup(lightGroup);
 
 	// デバッグテキスト用テクスチャ読み込み
 	if (!Sprite::LoadTexture(debugTextTexNumber, L"Resources/debugfont.png")) {
@@ -123,7 +125,6 @@ void GameScene::Draw()
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
-
 
 	// デバッグテキストの描画
 	debugText->DrawAll(cmdList);
