@@ -97,6 +97,8 @@ public: //  メンバ関数
 	void CreateBuffers(ID3D12Device* device);
 	// 描画
 	void Draw(ID3D12GraphicsCommandList* cmdList);
+	// マテリアルパラメータ転送
+	void TransferMaterial();
 	// モデルの変換行列取得
 	const XMMATRIX& GetModelTransform() { return meshNode->globalTransform; }
 
@@ -104,6 +106,16 @@ public: // アクセッサ
 	// getter
 	vector<Bone>& GetBones() { return bones; }
 	FbxScene* GetFbxScene() { return fbxScene; }
+	const XMFLOAT3& GetBaseColor() { return baseColor; }
+	float GetMetalness() { return metalness; }
+	float GetSpecular() { return specular; }
+	float GetRoughness() { return roughness; }
+
+	// setter
+	void SetBaseColor(const XMFLOAT3& _baseColor) { baseColor = _baseColor; }
+	void SetMetalness(float _metalness) { metalness = _metalness; }
+	void SetSpecular(float _specular) { specular = _specular; }
+	void SetRoughness(float _roughness) { roughness = _roughness; }
 
 private: // メンバ変数
 	// モデル名

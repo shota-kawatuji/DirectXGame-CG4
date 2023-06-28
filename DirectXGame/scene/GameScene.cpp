@@ -6,6 +6,10 @@
 #include <iomanip>
 
 using namespace DirectX;
+static float baseColor[3];
+static float metalness;
+static float specular;
+static float roughness;
 
 GameScene::GameScene()
 {
@@ -79,6 +83,14 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
 	// 3Dオブジェクト生成とモデルのセット
 	camera->SetTarget({ 0,0,0 });
 	camera->SetDistance(3.0f);
+
+	// マテリアルパラメータの初期値を取得
+	baseColor[0] = model1->GetBaseColor().x;
+	baseColor[1] = model1->GetBaseColor().y;
+	baseColor[2] = model1->GetBaseColor().z;
+	metalness = model1->GetMetalness();
+	specular = model1->GetSpecular();
+	roughness = model1->GetRoughness();
 }
 
 void GameScene::Update()
@@ -87,12 +99,20 @@ void GameScene::Update()
 	camera->Update();
 	object1->Update();
 	particleMan->Update();
+	// マテリアルパラメータをモデルに反映
+	model1->SetBaseColor(XMFLOAT3(baseColor));
+	model1->SetMetalness(metalness);
+	model1->SetSpecular(specular);
+	model1->SetRoughness(roughness);
+	model1->TransferMaterial();
 }
 
 void GameScene::Draw()
 {
 	// コマンドリストの取得
 	ID3D12GraphicsCommandList* cmdList = dxCommon->GetCommandList();
+	// ImGui表示/値変更
+	DrawUI();
 
 #pragma region 背景スプライト描画
 	// 背景スプライト描画前処理
@@ -132,4 +152,17 @@ void GameScene::Draw()
 	// スプライト描画後処理
 	Sprite::PostDraw();
 #pragma endregion
+}
+
+void GameScene::DrawUI()
+{
+	// ImGuiによる調整
+	ImGui::Begin("Material");
+	ImGui::SetWindowPos(ImVec2(0, 0));
+	ImGui::SetWindowSize(ImVec2(300, 130));
+	ImGui::ColorEdit3("baseColor", baseColor, ImGuiColorEditFlags_Float);
+	ImGui::SliderFloat("metalness", &metalness, 0, 1);
+	ImGui::SliderFloat("specular", &specular, 0, 1);
+	ImGui::SliderFloat("roughness", &roughness, 0, 1);
+	ImGui::End();
 }
