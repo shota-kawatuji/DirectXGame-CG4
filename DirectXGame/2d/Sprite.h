@@ -55,7 +55,7 @@ public: // 静的メンバ関数
 	/// <param name="texnumber">テクスチャ番号</param>
 	/// <param name="filename">画像ファイル名</param>
 	/// <returns>成否</returns>
-	static bool LoadTexture(UINT texnumber, const wchar_t*filename);
+	static bool LoadTexture(UINT texnumber, const wchar_t* filename);
 
 	/// <summary>
 	/// 描画前処理
@@ -107,7 +107,7 @@ public: // メンバ関数
 	/// コンストラクタ
 	/// </summary>
 	Sprite(UINT texNumber, XMFLOAT2 position, XMFLOAT2 size, XMFLOAT4 color, XMFLOAT2 anchorpoint, bool isFlipX, bool isFlipY);
-	
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -131,7 +131,7 @@ public: // メンバ関数
 	/// </summary>
 	/// <param name="position">座標</param>
 	void SetPosition(XMFLOAT2 position);
-	
+
 	/// <summary>
 	/// サイズの設定
 	/// </summary>
@@ -176,7 +176,7 @@ protected: // メンバ変数
 	// 頂点バッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vbView{};
 	// テクスチャ番号
-	UINT texNumber = 0; 
+	UINT texNumber = 0;
 	// Z軸回りの回転角
 	float rotation = 0.0f;
 	// 座標
@@ -186,9 +186,9 @@ protected: // メンバ変数
 	// アンカーポイント
 	XMFLOAT2 anchorpoint = { 0, 0 };
 	// ワールド行列
-	XMMATRIX matWorld{};		
+	XMMATRIX matWorld{};
 	// 色
-	XMFLOAT4 color = { 1, 1, 1, 1 }; 
+	XMFLOAT4 color = { 1, 1, 1, 1 };
 	// 左右反転
 	bool isFlipX = false;
 	// 上下反転

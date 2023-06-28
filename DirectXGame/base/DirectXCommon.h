@@ -127,7 +127,7 @@ private: // メンバ関数
 	/// フェンス生成
 	/// </summary>
 	/// <returns>成否</returns>
-	bool CreateFence();	
+	bool CreateFence();
 
 	/// <summary>
 	/// imgui初期化

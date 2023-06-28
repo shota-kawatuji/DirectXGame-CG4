@@ -85,7 +85,7 @@ public: // メンバ関数
 	/// ライト減衰角度をセット
 	/// </summary>
 	/// <param name="lightFactorAngle">x:減衰開始角度 y:減衰終了角度[degree]</param>
-	inline void SetLightFactorAngle(const XMFLOAT2& lightFactorAngle) { 
+	inline void SetLightFactorAngle(const XMFLOAT2& lightFactorAngle) {
 		this->lightFactorAngleCos.x = cosf(DirectX::XMConvertToRadians(lightFactorAngle.x));
 		this->lightFactorAngleCos.y = cosf(DirectX::XMConvertToRadians(lightFactorAngle.y));
 	}

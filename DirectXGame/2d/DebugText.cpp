@@ -11,7 +11,7 @@ DebugText::~DebugText()
 	}
 }
 
-DebugText * DebugText::GetInstance()
+DebugText* DebugText::GetInstance()
 {
 	static DebugText instance;
 	return &instance;
@@ -28,7 +28,7 @@ void DebugText::Initialize(UINT texnumber)
 }
 
 // 1文字列追加
-void DebugText::Print(const std::string & text, float x, float y, float scale = 1.0f)
+void DebugText::Print(const std::string& text, float x, float y, float scale = 1.0f)
 {
 	SetPos(x, y);
 	SetSize(scale);
@@ -71,7 +71,7 @@ void DebugText::Printf(const char* fmt, ...)
 {
 	va_list args;
 	va_start(args, fmt);
-	int w = vsnprintf(buffer, bufferSize-1, fmt, args);
+	int w = vsnprintf(buffer, bufferSize - 1, fmt, args);
 	NPrint(w, buffer);
 	va_end(args);
 }

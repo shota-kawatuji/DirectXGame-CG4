@@ -25,7 +25,7 @@ bool Audio::Initialize()
 	return true;
 }
 
-void Audio::PlayWave(const char * filename)
+void Audio::PlayWave(const char* filename)
 {
 	HRESULT result;
 	// ファイルストリーム

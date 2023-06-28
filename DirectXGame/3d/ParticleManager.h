@@ -96,7 +96,7 @@ public: // メンバ関数
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw(ID3D12GraphicsCommandList * cmdList);
+	void Draw(ID3D12GraphicsCommandList* cmdList);
 
 	/// <summary>
 	/// カメラのセット
@@ -113,7 +113,7 @@ public: // メンバ関数
 	/// <param name="accel">加速度</param>
 	/// <param name="start_scale">開始時スケール</param>
 	/// <param name="end_scale">終了時スケール</param>
-	void Add(int life, XMFLOAT3 position, XMFLOAT3 velocity, XMFLOAT3 accel, float start_scale, float end_scale );
+	void Add(int life, XMFLOAT3 position, XMFLOAT3 velocity, XMFLOAT3 accel, float start_scale, float end_scale);
 
 	/// <summary>
 	/// デスクリプタヒープの初期化

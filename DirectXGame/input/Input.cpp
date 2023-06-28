@@ -3,7 +3,7 @@
 
 #pragma comment(lib, "dinput8.lib")
 
-Input * Input::GetInstance()
+Input* Input::GetInstance()
 {
 	static Input instance;
 

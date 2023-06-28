@@ -40,7 +40,7 @@ void DebugCamera::Update()
 		float dx = mouseMove.lX / 100.0f;
 		float dy = mouseMove.lY / 100.0f;
 
-		XMVECTOR move = {-dx, +dy, 0, 0};
+		XMVECTOR move = { -dx, +dy, 0, 0 };
 		move = XMVector3Transform(move, matRot);
 
 		MoveVector(move);
@@ -75,7 +75,7 @@ void DebugCamera::Update()
 		// 注視点からずらした位置に視点座標を決定
 		const XMFLOAT3& target = GetTarget();
 		SetEye({ target.x + vTargetEye.m128_f32[0], target.y + vTargetEye.m128_f32[1], target.z + vTargetEye.m128_f32[2] });
-		SetUp({ vUp.m128_f32[0], vUp.m128_f32[1], vUp.m128_f32[2] });		
+		SetUp({ vUp.m128_f32[0], vUp.m128_f32[1], vUp.m128_f32[2] });
 	}
 
 	Camera::Update();
