@@ -33,14 +33,17 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
 	// カメラ生成
 	camera = new DebugCamera(WinApp::window_width, WinApp::window_height, input);
 
+	// ライト生成
+	lightGroup = LightGroup::Create();
+
 	// デバイスをセット
 	Object3d::SetDevice(dxCommon->GetDevice());
 	// カメラをセット
 	Object3d::SetCamera(camera);
-	// グラフィックスパイプライン生成
-	Object3d::CreateGraphicsPipeline();
 	// ライトグループをセット
 	Object3d::SetLightGroup(lightGroup);
+	// グラフィックスパイプライン生成
+	Object3d::CreateGraphicsPipeline();
 
 	// デバッグテキスト用テクスチャ読み込み
 	if (!Sprite::LoadTexture(debugTextTexNumber, L"Resources/debugfont.png")) {
@@ -71,9 +74,6 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
 	object1 = new Object3d;
 	object1->Initialize();
 	object1->SetModel(model1);
-
-	// ライト生成
-	lightGroup = LightGroup::Create();
 
 	// カメラ注視点をセット
 	// 3Dオブジェクト生成とモデルのセット

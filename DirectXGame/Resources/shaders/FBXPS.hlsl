@@ -7,5 +7,5 @@ SamplerState smp : register(s0);
 float4 main(VSOutput input) : SV_TARGET
 {
 	// ライトのアンビエントカラーをRGBとして塗る
-	return float4(ambientLightColor,1);
+	return float4(baseColor, 1);
 }
