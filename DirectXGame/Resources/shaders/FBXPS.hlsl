@@ -21,6 +21,30 @@ float SchlickFresnel(float f0, float f90, float cosine)
 	return lerp(f0, f90, m5);
 }
 
+float3 SchlickFresnel3(float f0, float f90, float cosine)
+{
+	float m = saturate(1 - cosine);
+	float m2 = m * m;
+	float m5 = m2 * m2 * m;
+	return lerp(f0, f90, m5);
+}
+
+// ディズニーのフレネル計算
+float3 DisneyFresnel(float LdotH)
+{
+	// F項(フレネル:Fresnel)
+	// 輝度
+	float luminance = 0.3f * baseColor.r + 0.6f * baseColor.g + 0.1f * baseColor.b;
+	// 色合い
+	float3 tintColor = baseColor / luminance;
+	// 非金属の鏡面反射色を計算
+	float3 nonMetalColor = specular * 0.08f * tintColor;
+	// metalnessによる色補間 金属の場合はベースカラー
+	float3 specularColor = lerp(nonMetalColor, baseColor, metalness);
+	// NdotHの割合でSchlickFresnel補間
+	return SchlickFresnel3(specularColor, float3(1, 1, 1), LdotH);
+}
+
 // UE4のGGX分布
 // alpha : roughnessの2乗
 // BdotH : 法線とハーフベクトルの内積
@@ -38,10 +62,10 @@ float3 CookTorranceSpecular(float NdotL, float NdotV, float NdotH, float LdotH)
 	float Ds = DisributionGGX(roughness * roughness, NdotH);
 
 	// F項(フレネル:Fresnel)
-	float3 Fs = float3(1, 1, 1);
+	float3 Fs = DisneyFresnel(LdotH);
 
 	// G項(幾何減衰:Geometry attenuation)
-	float Gs = 0.1f;
+	float Gs = 1.0f;
 
 	// m項(分母)
 	float m = 4.0f * NdotL * NdotV;

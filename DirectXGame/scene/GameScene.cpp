@@ -73,7 +73,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio* audio)
 	Sprite::LoadTexture(2, L"Resources/tex1.png");
 
 	// モデル名を指定してファイル読み込み
-	model1 = FbxLoader::GetInstance()->LoadModelFromFile("SpherePBR");
+	model1 = FbxLoader::GetInstance()->LoadModelFromFile("SpiralPBR");
 
 	object1 = new Object3d;
 	object1->Initialize();
@@ -159,7 +159,7 @@ void GameScene::DrawUI()
 	// ImGuiによる調整
 	ImGui::Begin("Material");
 	ImGui::SetWindowPos(ImVec2(0, 0));
-	ImGui::SetWindowSize(ImVec2(300, 130));
+	ImGui::SetWindowSize(ImVec2(300, 190));
 	ImGui::ColorEdit3("baseColor", baseColor, ImGuiColorEditFlags_Float);
 	ImGui::SliderFloat("metalness", &metalness, 0, 1);
 	ImGui::SliderFloat("specular", &specular, 0, 1);

@@ -23,8 +23,6 @@ protected: // エイリアス
 	using XMFLOAT4 = DirectX::XMFLOAT4;
 	using XMMATRIX = DirectX::XMMATRIX;
 
-public: // 定数
-
 public: // サブクラス
 	// 定数バッファ用データ構造体(座標変換行列)
 	struct ConstBufferDataTransform
