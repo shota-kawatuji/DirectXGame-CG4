@@ -55,6 +55,16 @@ float DisributionGGX(float alpha, float NdotH)
 	return alpha2 / (PI * t * t);
 }
 
+// UE4‚ÌSmithƒ‚ƒfƒ‹
+float GeometricSmith(float cosine)
+{
+	float k = (roughness + 1.0f);
+
+	k = k * k / 8.0f;
+
+	return cosine / (cosine * (1.0f - k) + k);
+}
+
 // ‹¾–Ê”½Ë‚ÌŒvZ
 float3 CookTorranceSpecular(float NdotL, float NdotV, float NdotH, float LdotH)
 {
@@ -65,7 +75,7 @@ float3 CookTorranceSpecular(float NdotL, float NdotV, float NdotH, float LdotH)
 	float3 Fs = DisneyFresnel(LdotH);
 
 	// G€(Šô‰½Œ¸Š:Geometry attenuation)
-	float Gs = 1.0f;
+	float Gs = GeometricSmith(NdotL) * GeometricSmith(NdotV);
 
 	// m€(•ª•ê)
 	float m = 4.0f * NdotL * NdotV;
