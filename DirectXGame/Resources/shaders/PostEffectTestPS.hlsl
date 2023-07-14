@@ -11,7 +11,7 @@ float4 main(VSOutput input) : SV_TARGET
 
     // 平均ぼかしを加える
     float4 blur = 0.0f;
-    float2 texelSize = 1.0f / float2(512, 512); // テクセルサイズを計算
+    float2 texelSize = 1.0f / float2(256, 256); // テクセルサイズを計算
     for (int i = -1; i <= 1; ++i) {
         for (int j = -1; j <= 1; ++j) {
             blur += tex1.Sample(smp, input.uv + float2(texelSize.x * i, texelSize.y * j));
@@ -21,7 +21,7 @@ float4 main(VSOutput input) : SV_TARGET
 
     float4 color = 1 - colortex0;
     if (fmod(input.uv.y, 0.1f) < 0.05f) {
-        color = lerp(colortex0, colortex1, 0.5f);
+        color = lerp(colortex0, colortex1, 0.4f);
     }
 
     return float4(color.rgb, 1);
